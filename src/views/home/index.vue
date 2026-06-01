@@ -1,45 +1,54 @@
 <template>
   <div>
-    <!-- Hero section -->
-    <section class="hero-section">
-      <div class="hero-content">
-        <h1 class="hero-title">欢迎来到 Hei PC</h1>
-        <p class="hero-desc">
+    <!-- Hero -->
+    <section
+      class="bg-gradient-to-r from-[#1677ff] via-[#0958d9] to-[#0a3d8f] py-20 px-6 text-center text-white"
+    >
+      <div class="max-w-800px mx-auto">
+        <h1 class="text-5xl font-bold mb-4 leading-tight">欢迎来到 Hei PC</h1>
+        <p class="text-lg opacity-85 mb-8 leading-relaxed">
           一个面向公众的现代化服务平台，为您提供高效、安全、便捷的在线服务体验
         </p>
-        <div class="hero-actions">
-          <a-button type="primary" size="large" class="hero-btn" @click="router.push('/about')">
+        <div class="flex gap-4 justify-center">
+          <a-button
+            type="primary"
+            size="large"
+            class="h-12 px-8 text-base rounded-lg"
+            @click="router.push('/about')"
+          >
             了解更多
-          </a-button>
-          <a-button size="large" ghost class="hero-btn" @click="router.push('/notices')">
-            查看公告
           </a-button>
         </div>
       </div>
     </section>
 
     <!-- Features -->
-    <section class="section">
-      <h2 class="section-title">核心优势</h2>
-      <p class="section-desc">我们致力于为您提供最优质的服务</p>
-      <div class="features-grid">
-        <a-card v-for="item in features" :key="item.title" :bordered="false" class="feature-card">
+    <section class="py-16 px-6 max-w-1200px mx-auto">
+      <h2 class="text-center text-3xl font-semibold mb-2 text-gray-800">核心优势</h2>
+      <p class="text-center text-gray-500 mb-12 text-base">我们致力于为您提供最优质的服务</p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <a-card
+          v-for="item in features"
+          :key="item.title"
+          :bordered="false"
+          class="rounded-xl hover:-translate-y-1 hover:shadow-lg transition-all duration-200"
+        >
           <template #title>
-            <div class="feature-card-title">
-              <component :is="item.icon" class="feature-icon" />
+            <div class="flex items-center gap-2">
+              <component :is="item.icon" class="text-xl text-primary" />
               <span>{{ item.title }}</span>
             </div>
           </template>
-          <p class="feature-desc">{{ item.desc }}</p>
+          <p class="text-gray-500 leading-relaxed min-h-12">{{ item.desc }}</p>
         </a-card>
       </div>
     </section>
 
     <!-- Latest notices -->
-    <section class="section section-alt">
-      <h2 class="section-title">最新公告</h2>
-      <p class="section-desc">了解平台最新动态和通知</p>
-      <div class="notices-wrapper">
+    <section class="py-16 px-6">
+      <h2 class="text-center text-3xl font-semibold mb-2 text-gray-800">最新公告</h2>
+      <p class="text-center text-gray-500 mb-12 text-base">了解平台最新动态和通知</p>
+      <div class="max-w-800px mx-auto bg-white rounded-xl p-6 shadow-sm">
         <a-spin :spinning="loading">
           <a-empty v-if="!loading && notices.length === 0" description="暂无公告" />
           <a-list v-else :data-source="notices" :pagination="false" item-layout="horizontal">
@@ -47,12 +56,15 @@
               <a-list-item>
                 <a-list-item-meta>
                   <template #title>
-                    <router-link :to="`/notices/${item.id}`" class="notice-title">
+                    <router-link
+                      :to="`/notices/${item.id}`"
+                      class="text-gray-800 font-medium no-underline hover:text-primary"
+                    >
                       {{ item.title }}
                     </router-link>
                   </template>
                   <template #description>
-                    <span class="notice-meta">{{ item.create_time }}</span>
+                    <span class="text-xs text-gray-400">{{ item.create_time }}</span>
                     <a-tag v-if="item.level" :color="noticeLevelColor(item.level)" class="ml-2">
                       {{ item.level }}
                     </a-tag>
@@ -61,8 +73,10 @@
               </a-list-item>
             </template>
           </a-list>
-          <div v-if="notices.length" class="notices-more">
-            <router-link to="/notices">查看全部公告 →</router-link>
+          <div v-if="notices.length" class="text-center mt-4 pt-4 border-t border-gray-100">
+            <router-link to="/notices" class="text-primary no-underline">
+              查看全部公告 →
+            </router-link>
           </div>
         </a-spin>
       </div>
@@ -144,138 +158,3 @@ onMounted(async () => {
   }
 })
 </script>
-
-<style scoped>
-.hero-section {
-  background: linear-gradient(135deg, #1677ff 0%, #0958d9 50%, #0a3d8f 100%);
-  padding: 80px 24px;
-  text-align: center;
-  color: #fff;
-}
-.hero-content {
-  max-width: 800px;
-  margin: 0 auto;
-}
-.hero-title {
-  font-size: 48px;
-  font-weight: 700;
-  margin-bottom: 16px;
-  line-height: 1.2;
-}
-.hero-desc {
-  font-size: 18px;
-  opacity: 0.85;
-  margin-bottom: 32px;
-  line-height: 1.6;
-}
-.hero-actions {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-}
-.hero-btn {
-  height: 48px;
-  padding: 0 32px;
-  font-size: 16px;
-  border-radius: 8px;
-}
-
-.section {
-  padding: 64px 24px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-.section-alt {
-  max-width: none;
-  background: #fafafa;
-}
-.section-title {
-  text-align: center;
-  font-size: 32px;
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: #1a1a1a;
-}
-.section-desc {
-  text-align: center;
-  color: #666;
-  margin-bottom: 48px;
-  font-size: 16px;
-}
-
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-}
-.feature-card {
-  border-radius: 12px;
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s;
-}
-.feature-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
-}
-.feature-card-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.feature-icon {
-  font-size: 20px;
-  color: var(--primary-color, #1677ff);
-}
-.feature-desc {
-  color: #666;
-  line-height: 1.6;
-  min-height: 48px;
-}
-
-.notices-wrapper {
-  max-width: 800px;
-  margin: 0 auto;
-  background: #fff;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-}
-.notice-title {
-  color: #1a1a1a;
-  font-weight: 500;
-  text-decoration: none;
-}
-.notice-title:hover {
-  color: var(--primary-color, #1677ff);
-}
-.notice-meta {
-  font-size: 13px;
-  color: #999;
-}
-.notices-more {
-  text-align: center;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #f0f0f0;
-}
-.notices-more a {
-  color: var(--primary-color, #1677ff);
-  text-decoration: none;
-}
-
-@media (max-width: 768px) {
-  .hero-title {
-    font-size: 32px;
-  }
-  .hero-desc {
-    font-size: 16px;
-  }
-  .features-grid {
-    grid-template-columns: 1fr;
-  }
-  .section {
-    padding: 40px 16px;
-  }
-}
-</style>

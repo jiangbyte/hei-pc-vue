@@ -1,14 +1,13 @@
 <template>
-  <div class="notice-list-page">
-    <div class="page-header">
-      <h1 class="page-title">通知公告</h1>
-      <p class="page-desc">了解平台最新动态和通知信息</p>
+  <div class="max-w-900px mx-auto py-10 px-6">
+    <div class="text-center mb-10">
+      <h1 class="text-3xl font-semibold text-gray-800 mb-2">通知公告</h1>
+      <p class="text-base text-gray-500">了解平台最新动态和通知信息</p>
     </div>
 
-    <div class="page-content">
+    <div class="bg-white rounded-xl px-8 py-6 shadow-sm">
       <a-spin :spinning="loading">
         <a-empty v-if="!loading && notices.length === 0" description="暂无公告" />
-
         <a-list
           v-else
           :data-source="notices"
@@ -25,16 +24,19 @@
             <a-list-item>
               <a-list-item-meta>
                 <template #title>
-                  <router-link :to="`/notices/${item.id}`" class="notice-title">
+                  <router-link
+                    :to="`/notices/${item.id}`"
+                    class="text-gray-800 font-medium no-underline hover:text-primary"
+                  >
                     {{ item.title }}
                   </router-link>
                 </template>
                 <template #description>
-                  <span class="notice-time">{{ item.create_time }}</span>
+                  <span class="text-xs text-gray-400 mr-2">{{ item.create_time }}</span>
                   <a-tag v-if="item.level" :color="levelColor(item.level)">{{ item.level }}</a-tag>
                 </template>
               </a-list-item-meta>
-              <div v-if="item.summary" class="notice-summary">
+              <div v-if="item.summary" class="text-gray-500 mt-2 leading-relaxed">
                 {{ item.summary }}
               </div>
             </a-list-item>
@@ -84,50 +86,3 @@ function onPageChange(p: number) {
 
 onMounted(loadNotices)
 </script>
-
-<style scoped>
-.notice-list-page {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 40px 24px;
-}
-.page-header {
-  text-align: center;
-  margin-bottom: 40px;
-}
-.page-title {
-  font-size: 32px;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin-bottom: 8px;
-}
-.page-desc {
-  color: #666;
-  font-size: 16px;
-}
-.page-content {
-  background: #fff;
-  border-radius: 12px;
-  padding: 24px 32px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-}
-.notice-title {
-  font-size: 16px;
-  font-weight: 500;
-  color: #1a1a1a;
-  text-decoration: none;
-}
-.notice-title:hover {
-  color: var(--primary-color, #1677ff);
-}
-.notice-time {
-  font-size: 13px;
-  color: #999;
-  margin-right: 8px;
-}
-.notice-summary {
-  color: #666;
-  margin-top: 8px;
-  line-height: 1.6;
-}
-</style>

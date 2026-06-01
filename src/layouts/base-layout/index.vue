@@ -1,104 +1,81 @@
 <template>
-  <div class="min-h-screen flex flex-col">
-    <PcHeader
-      :scrolled="scrolled"
-      :nav-items="navItems"
-      :is-active="isActive"
-      @toggle-mobile-menu="mobileDrawerOpen = true"
-    />
-
-    <!-- Mobile drawer -->
-    <a-drawer
-      v-model:open="mobileDrawerOpen"
-      placement="right"
-      :closable="true"
-      :width="280"
-      :body-style="{ padding: '24px' }"
+  <ALayout class="min-h-screen bg-white">
+    <!-- Header -->
+    <ALayoutHeader
+      class="px-4 md:px-6 flex items-center justify-between sticky top-0 z-50"
+      style="background: #fff; box-shadow: 0 1px 0 #e8e8e8"
     >
-      <div class="flex flex-col gap-2">
-        <router-link
-          v-for="item in navItems"
-          :key="item.path"
-          :to="item.path"
-          class="block px-4 py-3 rounded-md text-base text-gray-700 no-underline hover:bg-gray-50 transition-colors"
-          :class="{ '!text-primary !font-medium': isActive(item.path) }"
-          @click="mobileDrawerOpen = false"
+      <!-- Mobile hamburger -->
+      <MenuOutlined class="md:hidden text-lg cursor-pointer mr-3" @click="menuDrawerOpen = true" />
+
+      <!-- Logo + Nav -->
+      <div class="flex items-center h-full flex-1">
+        <Logo />
+        <AMenu
+          mode="horizontal"
+          :selected-keys="[route.path]"
+          class="ml-6 flex-1 hidden md:block"
+          style="border-bottom: none !important"
         >
-          {{ item.label }}
-        </router-link>
-        <a-divider />
+          <NavMenuItems :items="navItems" />
+        </AMenu>
+      </div>
+
+      <div class="flex items-center gap-2">
         <template v-if="auth.isLogin">
-          <router-link
-            to="/profile"
-            class="block px-4 py-3 rounded-md text-base text-gray-700 no-underline hover:bg-gray-50"
-            @click="mobileDrawerOpen = false"
-          >
-            个人中心
-          </router-link>
-          <a
-            class="block px-4 py-3 rounded-md text-base text-gray-700 no-underline hover:bg-gray-50 cursor-pointer"
-            @click="handleMobileLogout"
-          >
-            退出登录
-          </a>
+          <UserAvatar />
         </template>
         <template v-else>
-          <router-link
-            to="/auth/login"
-            class="block px-4 py-3 rounded-md text-base text-gray-700 no-underline hover:bg-gray-50"
-            @click="mobileDrawerOpen = false"
-          >
-            登录
-          </router-link>
-          <router-link
-            to="/auth/register"
-            class="block px-4 py-3 rounded-md text-base text-gray-700 no-underline hover:bg-gray-50"
-            @click="mobileDrawerOpen = false"
-          >
-            注册
-          </router-link>
+          <a-button type="link" @click="router.push('/auth/login')">登录</a-button>
+          <a-button type="link" @click="router.push('/auth/register')">注册</a-button>
         </template>
       </div>
+    </ALayoutHeader>
+
+    <!-- Mobile menu drawer -->
+    <a-drawer
+      :open="menuDrawerOpen"
+      placement="left"
+      :width="260"
+      :closable="false"
+      :body-style="{ padding: 0 }"
+      @update:open="menuDrawerOpen = $event"
+    >
+      <div class="p-4 border-b border-gray-100">
+        <Logo />
+      </div>
+      <AMenu
+        mode="inline"
+        :selected-keys="[route.path]"
+        class="!border-0"
+        @click="menuDrawerOpen = false"
+      >
+        <NavMenuItems :items="navItems" />
+      </AMenu>
     </a-drawer>
 
-    <!-- Content -->
-    <main class="flex-1">
+    <ALayoutContent>
       <router-view v-slot="{ Component }">
         <component :is="Component" />
       </router-view>
-    </main>
+    </ALayoutContent>
 
     <FooterBar />
-  </div>
+  </ALayout>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { MenuOutlined } from '@ant-design/icons-vue'
 import { useAuthStore } from '@/store'
 import { useNavMenu } from '@/hooks/useNavMenu'
-import { FooterBar } from './components'
-import PcHeader from './header/index.vue'
+import { Logo, UserAvatar, FooterBar } from './components'
+import NavMenuItems from './components/NavMenuItems.vue'
 
+const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
-const { navItems, isActive } = useNavMenu()
-const mobileDrawerOpen = ref(false)
-
-const scrolled = ref(false)
-function onScroll() {
-  scrolled.value = window.scrollY > 0
-}
-onMounted(() => window.addEventListener('scroll', onScroll, { passive: true }))
-onUnmounted(() => window.removeEventListener('scroll', onScroll))
-
-function handleLogout() {
-  auth.logout()
-  router.push('/')
-}
-
-function handleMobileLogout() {
-  mobileDrawerOpen.value = false
-  handleLogout()
-}
+const { navItems } = useNavMenu()
+const menuDrawerOpen = ref(false)
 </script>
