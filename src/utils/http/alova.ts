@@ -7,12 +7,31 @@ import VueHook from 'alova/vue'
 import type { VueHookType } from 'alova/vue'
 import { DEFAULT_ALOVA_OPTIONS, DEFAULT_BACKEND_OPTIONS } from './config'
 import { handleBusinessError, handleResponseError } from './handle'
+import { useAuthStore } from '@/store'
+
+function forceLogout() {
+  const authStore = useAuthStore()
+  if (!authStore.isLogin) return
+
+  authStore.token = ''
+  authStore.userInfo = null
+
+  import('@/router').then(({ router }) => {
+    const name = router.currentRoute.value.name
+    if (name && name !== 'login') {
+      router.push({
+        name: 'login',
+        query: { redirect: router.currentRoute.value.fullPath },
+      })
+    }
+  })
+}
 
 const { onAuthRequired } = createServerTokenAuthentication<VueHookType>({
   assignToken: method => {
-    const token = localStorage.getItem('pc_token')
-    if (token) {
-      method.config.headers.Authorization = token
+    const authStore = useAuthStore()
+    if (authStore.token) {
+      method.config.headers.Authorization = authStore.token
     }
   },
 })
@@ -46,7 +65,7 @@ function createAlovaInstance(
             typeof response.json === 'function' ? await response.json() : (response as any).data
 
           if (apiData[bc.codeKey] === 401) {
-            localStorage.removeItem('pc_token')
+            forceLogout()
             return { ...apiData, success: false }
           }
 
@@ -59,6 +78,10 @@ function createAlovaInstance(
           }
 
           return handleBusinessError(apiData, bc)
+        }
+
+        if (status === 401) {
+          forceLogout()
         }
 
         return handleResponseError(response)

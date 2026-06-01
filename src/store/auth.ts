@@ -1,9 +1,5 @@
 import { defineStore } from 'pinia'
-import {
-  fetchLogin,
-  fetchSm2PublicKey,
-  fetchLogout,
-} from '@/api/auth'
+import { fetchLogin, fetchSm2PublicKey, fetchLogout } from '@/api/auth'
 import { fetchClientUserCurrent } from '@/api/client-user'
 import { sm2 } from 'sm-crypto'
 import { useDictStore } from './dict'
@@ -42,7 +38,6 @@ export const useAuthStore = defineStore('auth', {
       })
       if (!success) return false
       this.token = data.token
-      localStorage.setItem('pc_token', data.token)
       await this.fetchUserInfo()
       await useDictStore().loadDict()
       return true
@@ -55,7 +50,6 @@ export const useAuthStore = defineStore('auth', {
       await fetchLogout().catch(() => {})
       this.token = ''
       this.userInfo = null
-      localStorage.removeItem('pc_token')
     },
   },
   persist: true,

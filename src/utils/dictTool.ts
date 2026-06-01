@@ -1,4 +1,4 @@
-import { useDictStore } from '@/store/dict'
+import { useDictStore } from '@/store'
 
 export function dictLabel(typeCode: string, value: string): string {
   return useDictStore().dictLabel(typeCode, value)
