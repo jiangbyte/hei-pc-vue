@@ -1,5 +1,5 @@
 <template>
-  <ADropdown :trigger="['click']" placement="bottomRight" :overlay-style="{ width: '360px' }">
+  <ADropdown :trigger="['click']" placement="bottomRight" :overlay-style="{ width: '360px' }" @openChange="onOpenChange">
     <div class="message-bell inline-flex items-center">
       <ABadge :count="wsStore.unreadCount" :overflow-count="99" size="small">
         <BellOutlined class="text-lg cursor-pointer" />
@@ -89,6 +89,9 @@ async function handleItemClick(item: any) {
 }
 
 watch(() => wsStore.unreadVersion, () => {
+  loadList()
+  wsStore.loadUnreadCount()
+});
 
 function onOpenChange(open: boolean) {
   if (open) {
@@ -96,9 +99,6 @@ function onOpenChange(open: boolean) {
     wsStore.loadUnreadCount()
   }
 }
-  loadList()
-  wsStore.loadUnreadCount()
-})
 
 onMounted(() => {
   wsStore.loadUnreadCount()

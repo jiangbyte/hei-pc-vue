@@ -46,6 +46,13 @@ const router = createRouter({
           component: () => import('@/views/message/index.vue'),
           meta: { title: '站内信', requiresAuth: true },
         },
+
+        {
+          path: 'message/conversation',
+          name: 'message-conversation',
+          component: () => import('@/views/message/conversation.vue'),
+          meta: { title: '消息详情', requiresAuth: true },
+        },
       ],
     },
     ...staticRoutes,
