@@ -59,7 +59,7 @@
 
     <!-- Detail Modal -->
     <AModal v-model:open="detailVisible" title="消息详情" :footer="null" width="600px">
-      <ADescriptions v-if="currentMessage" column="1" bordered size="small">
+      <ADescriptions v-if="currentMessage" :column="1" bordered size="small">
         <ADescriptionsItem label="标题">{{ currentMessage.title }}</ADescriptionsItem>
         <ADescriptionsItem label="内容">{{ currentMessage.content || '-' }}</ADescriptionsItem>
         <ADescriptionsItem label="状态">
