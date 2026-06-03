@@ -1,3 +1,5 @@
 export { useAppStore } from './app'
-export { useDictStore } from './dict'
+export type { ThemeMode } from './app'
 export { useAuthStore } from './auth'
+export { useDictStore } from './dict'
+export { useWsStore } from './ws'

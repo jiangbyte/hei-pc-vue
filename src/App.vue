@@ -1,5 +1,15 @@
 <template>
-  <AConfigProvider :locale="zhCN" :theme="themeConfig">
+  <AConfigProvider :theme="themeConfig" :locale="zhCN">
+    <!-- Standalone loading overlay (not wrapping content) -->
+    <div
+      v-show="app.loading"
+      class="fixed inset-0 z-9999 flex flex-col items-center justify-center"
+      style="background: var(--container-bg, #fff)"
+    >
+      <a-spin size="large" :spinning="true" />
+      <div class="mt-4 text-sm" style="color: var(--text-secondary, #00000073)">加载中...</div>
+    </div>
+    <!-- App content -->
     <div v-show="!app.loading">
       <router-view :key="app.reloadCounter" />
     </div>
@@ -7,16 +17,16 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onMounted } from 'vue'
 import zhCN from 'ant-design-vue/es/locale/zh_CN'
 import 'dayjs/locale/zh-cn'
-import { computed } from 'vue'
 import { useAppStore, useDictStore } from '@/store'
+import { useWs } from '@/hooks/useWs'
 
 const app = useAppStore()
 const dictStore = useDictStore()
 
 const themeConfig = computed(() => ({
-  hashed: false,
   components: {
     Menu: {
       colorActiveBarHeight: 0,
@@ -25,5 +35,11 @@ const themeConfig = computed(() => ({
   },
 }))
 
-dictStore.loadDict()
+// WebSocket connection for real-time messaging
+useWs()
+
+// Preload dict on mount
+onMounted(() => {
+  dictStore.loadDict()
+})
 </script>

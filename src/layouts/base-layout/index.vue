@@ -2,8 +2,7 @@
   <ALayout class="min-h-screen bg-white">
     <!-- Header -->
     <ALayoutHeader
-      class="px-4 md:px-6 flex items-center justify-between sticky top-0 z-50"
-      style="background: #fff; box-shadow: 0 1px 0 #e8e8e8"
+      class="layout-header px-4 md:px-6 flex items-center justify-between sticky top-0 z-50"
     >
       <!-- Mobile hamburger -->
       <MenuOutlined class="md:hidden text-lg cursor-pointer mr-3" @click="menuDrawerOpen = true" />
@@ -23,6 +22,7 @@
 
       <div class="flex items-center gap-2">
         <template v-if="auth.isLogin">
+          <MessageBell />
           <UserAvatar />
         </template>
         <template v-else>
@@ -60,7 +60,7 @@
       </router-view>
     </ALayoutContent>
 
-    <FooterBar />
+    <FooterBar v-if="app.showFooter" />
   </ALayout>
 </template>
 
@@ -68,14 +68,16 @@
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { MenuOutlined } from '@ant-design/icons-vue'
-import { useAuthStore } from '@/store'
+import { useAuthStore, useAppStore } from '@/store'
 import { useNavMenu } from '@/hooks/useNavMenu'
 import { Logo, UserAvatar, FooterBar } from './components'
 import NavMenuItems from './components/NavMenuItems.vue'
+import MessageBell from './components/MessageBell.vue'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
+const app = useAppStore()
 const { navItems } = useNavMenu()
 const menuDrawerOpen = ref(false)
 </script>

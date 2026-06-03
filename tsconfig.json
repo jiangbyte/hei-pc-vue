@@ -1,23 +1,26 @@
 {
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
   "compilerOptions": {
-    "target": "esnext",
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo",
+    "target": "es2023",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "module": "esnext",
-    "moduleResolution": "bundler",
-    "strict": true,
-    "jsx": "preserve",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "esModuleInterop": true,
-    "lib": ["esnext", "dom", "dom.iterable"],
+    "types": ["vite/client"],
     "skipLibCheck": true,
-    "noEmit": true,
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
-    "baseUrl": ".",
-    "types": ["node"],
-    "ignoreDeprecations": "6.0"
+    "ignoreDeprecations": "6.0",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/**/*.ts", "src/**/*.vue", "src/**/*.d.ts"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "vite.config.ts"]
 }
