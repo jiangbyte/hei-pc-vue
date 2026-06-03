@@ -18,6 +18,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
+import { theme } from 'ant-design-vue'
 import zhCN from 'ant-design-vue/es/locale/zh_CN'
 import 'dayjs/locale/zh-cn'
 import { useAppStore, useDictStore } from '@/store'
@@ -27,6 +28,7 @@ const app = useAppStore()
 const dictStore = useDictStore()
 
 const themeConfig = computed(() => ({
+  algorithm: theme.defaultAlgorithm,
   components: {
     Menu: {
       colorActiveBarHeight: 0,

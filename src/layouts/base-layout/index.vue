@@ -1,11 +1,17 @@
 <template>
-  <ALayout class="min-h-screen bg-white">
+  <div class="min-h-screen bg-gray-50">
     <!-- Header -->
-    <ALayoutHeader
-      class="layout-header px-4 md:px-6 flex items-center justify-between sticky top-0 z-50"
+    <header
+      class="h-16 px-4 md:px-8 flex items-center justify-between sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200"
     >
       <!-- Mobile hamburger -->
-      <MenuOutlined class="md:hidden text-lg cursor-pointer mr-3" @click="menuDrawerOpen = true" />
+      <a-button
+        class="md:hidden flex items-center justify-center"
+        type="text"
+        @click="menuDrawerOpen = true"
+      >
+        <template #icon><MenuOutlined /></template>
+      </a-button>
 
       <!-- Logo + Nav -->
       <div class="flex items-center h-full flex-1">
@@ -13,55 +19,35 @@
         <AMenu
           mode="horizontal"
           :selected-keys="[route.path]"
-          class="ml-6 flex-1 hidden md:block"
-          style="border-bottom: none !important"
-        >
-          <NavMenuItems :items="navItems" />
-        </AMenu>
+          :items="menuItems"
+          class="flex-1 hidden md:flex border-0 bg-transparent"
+          @click="handleMenuClick"
+        />
       </div>
 
       <div class="flex items-center gap-2">
         <template v-if="auth.isLogin">
           <MessageBell />
-          <UserAvatar />
+          <UserAvatar @open-drawer="userDrawerOpen = true" />
         </template>
         <template v-else>
-          <a-button type="link" @click="router.push('/auth/login')">登录</a-button>
-          <a-button type="link" @click="router.push('/auth/register')">注册</a-button>
+          <a-button type="text" @click="router.push('/auth/login')">登录</a-button>
+          <a-button type="primary" @click="router.push('/auth/register')">注册</a-button>
         </template>
       </div>
-    </ALayoutHeader>
+    </header>
 
-    <!-- Mobile menu drawer -->
-    <a-drawer
-      :open="menuDrawerOpen"
-      placement="left"
-      :width="260"
-      :closable="false"
-      :body-style="{ padding: 0 }"
-      @update:open="menuDrawerOpen = $event"
-    >
-      <div class="p-4 border-b border-gray-100">
-        <Logo />
-      </div>
-      <AMenu
-        mode="inline"
-        :selected-keys="[route.path]"
-        class="!border-0"
-        @click="menuDrawerOpen = false"
-      >
-        <NavMenuItems :items="navItems" />
-      </AMenu>
-    </a-drawer>
+    <MobileDrawer v-model:open="menuDrawerOpen" />
+    <UserDrawer v-model:open="userDrawerOpen" />
 
-    <ALayoutContent>
+    <main class="min-h-[calc(100vh-4rem)]">
       <router-view v-slot="{ Component }">
         <component :is="Component" />
       </router-view>
-    </ALayoutContent>
+    </main>
 
     <FooterBar v-if="app.showFooter" />
-  </ALayout>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -69,15 +55,15 @@ import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { MenuOutlined } from '@ant-design/icons-vue'
 import { useAuthStore, useAppStore } from '@/store'
-import { useNavMenu } from '@/hooks/useNavMenu'
-import { Logo, UserAvatar, FooterBar } from './components'
-import NavMenuItems from './components/NavMenuItems.vue'
+import { Logo, UserAvatar, UserDrawer, FooterBar, MobileDrawer } from './components'
 import MessageBell from './components/MessageBell.vue'
+import { useMenu } from './sider/useMenu'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 const app = useAppStore()
-const { navItems } = useNavMenu()
+const { menuItems, handleMenuClick } = useMenu()
 const menuDrawerOpen = ref(false)
+const userDrawerOpen = ref(false)
 </script>

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { fetchUnreadCount } from '@/api/message'
 
 export const useWsStore = defineStore('ws', () => {
   let ws: WebSocket | null = null
@@ -14,6 +15,19 @@ export const useWsStore = defineStore('ws', () => {
   const unreadVersion = ref(0)
   /** Latest new_message payload, for immediate display */
   const lastNewMessage = ref<any>(null)
+  /** Shared unread message count (both header and message page use this) */
+  const unreadCount = ref(0)
+
+  async function loadUnreadCount() {
+    try {
+      const { data } = await fetchUnreadCount()
+      if (data?.count !== undefined) {
+        unreadCount.value = data.count
+      }
+    } catch {
+      // ignore
+    }
+  }
 
   function getWsUrl(): string {
     const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:'
@@ -74,6 +88,7 @@ export const useWsStore = defineStore('ws', () => {
     switch (data.type) {
       case 'new_message':
         unreadVersion.value++
+        unreadCount.value++
         lastNewMessage.value = data.payload || null
         break
     }
@@ -118,5 +133,5 @@ export const useWsStore = defineStore('ws', () => {
     connected.value = false
   }
 
-  return { connected, lastError, unreadVersion, lastNewMessage, connect, disconnect }
+  return { connected, lastError, unreadVersion, lastNewMessage, unreadCount, loadUnreadCount, connect, disconnect }
 })

@@ -14,8 +14,8 @@
           {{ auth.userInfo?.nickname?.[0] || auth.userInfo?.username?.[0] || 'U' }}
         </AAvatar>
         <template v-if="auth.isLogin">
-          <div class="text-base font-medium">{{ auth.userInfo?.nickname || '' }}</div>
-          <div class="text-xs text-gray-400">{{ auth.userInfo?.username || '' }}</div>
+          <div class="text-lg font-medium">{{ auth.userInfo?.nickname || '' }}</div>
+          <div class="text-md text-gray-400">{{ auth.userInfo?.username || '' }}</div>
         </template>
         <template v-else>
           <div class="text-base">未登录</div>

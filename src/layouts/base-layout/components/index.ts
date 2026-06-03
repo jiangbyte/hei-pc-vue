@@ -1,4 +1,5 @@
 export { default as Logo } from './Logo.vue'
 export { default as UserAvatar } from './UserAvatar.vue'
 export { default as UserDrawer } from './UserDrawer.vue'
+export { default as MobileDrawer } from './MobileDrawer.vue'
 export { default as FooterBar } from './FooterBar.vue'
