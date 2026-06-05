@@ -11,11 +11,13 @@ export const useWsStore = defineStore('ws', () => {
 
   const connected = ref(false)
   const lastError = ref<string | null>(null)
-  /** Incremented on each new_message WS event, for components to reactively refresh */
-  const unreadVersion = ref(0)
-  /** Latest new_message payload, for immediate display */
+  /** Incremented on each WS event, for components to reactively refresh */
+  const conversationVersion = ref(0)
+  /** Latest new_message payload */
   const lastNewMessage = ref<any>(null)
-  /** Shared unread message count (both header and message page use this) */
+  /** Latest group_message payload */
+  const lastGroupMessage = ref<any>(null)
+  /** Shared unread count */
   const unreadCount = ref(0)
 
   async function loadUnreadCount() {
@@ -87,9 +89,13 @@ export const useWsStore = defineStore('ws', () => {
     if (!data.type) return
     switch (data.type) {
       case 'new_message':
-        unreadVersion.value++
+        conversationVersion.value++
         unreadCount.value++
         lastNewMessage.value = data.payload || null
+        break
+      case 'group_message':
+        conversationVersion.value++
+        lastGroupMessage.value = data.payload || null
         break
     }
   }
@@ -133,5 +139,8 @@ export const useWsStore = defineStore('ws', () => {
     connected.value = false
   }
 
-  return { connected, lastError, unreadVersion, lastNewMessage, unreadCount, loadUnreadCount, connect, disconnect }
+  return {
+    connected, lastError, conversationVersion, lastNewMessage, lastGroupMessage,
+    unreadCount, loadUnreadCount, connect, disconnect,
+  }
 })

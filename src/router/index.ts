@@ -46,7 +46,6 @@ const router = createRouter({
           component: () => import('@/views/message/index.vue'),
           meta: { title: '站内信', requiresAuth: true },
         },
-
         {
           path: 'message/conversation',
           name: 'message-conversation',

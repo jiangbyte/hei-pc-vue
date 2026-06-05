@@ -1,5 +1,7 @@
 import { request } from '@/utils'
 
+// ==================== Single-Chat Messages ====================
+
 export function fetchMessagePage(params: { current: number; size: number; status?: string }) {
   return request.Get<Service.ResponseResult<Service.PageResult>>('/api/v1/c/message/page', {
     params,
@@ -19,6 +21,8 @@ export function fetchSendMessage(data: {
   content?: string
   receiver_ids: string[]
   receiver_type: string
+  msg_type?: string
+  extra?: string
 }) {
   return request.Post<Service.ResponseResult>('/api/v1/c/message/send', data)
 }
@@ -35,7 +39,8 @@ export function fetchRemoveMessages(data: { ids: string[] }) {
   return request.Post<Service.ResponseResult>('/api/v1/c/message/remove', data)
 }
 
-// Conversation-based APIs
+// ==================== Conversation APIs ====================
+
 export function fetchConversations() {
   return request.Get<Service.ResponseResult<ConversationItem[]>>('/api/v1/c/message/conversations')
 }
@@ -51,12 +56,26 @@ export function fetchConversationMessages(params: {
   }>>('/api/v1/c/message/conversation/messages', { params })
 }
 
+export function fetchMarkConversationRead(data: { conversation_id: string }) {
+  return request.Post<Service.ResponseResult>('/api/v1/c/message/conversation/read', data)
+}
+
+// ==================== Types ====================
+
 export interface ConversationItem {
   conversation_id: string
-  other_user_id: string
-  other_user_type: string
-  other_nickname: string
-  other_avatar: string
+  conversation_type: 'single' | 'group'
+  // Single-chat fields
+  other_user_id?: string
+  other_user_type?: string
+  other_nickname?: string
+  other_avatar?: string
+  // Group fields
+  group_id?: string
+  group_name?: string
+  group_avatar?: string
+  member_count?: number
+  // Common
   last_content: string
   last_time: string
   unread_count: number
@@ -67,10 +86,8 @@ export interface ConversationMessage {
   sender_id: string | null
   sender_type: string
   content: string
+  msg_type?: string
+  extra?: string
   status: string
   created_at: string
-}
-
-export function fetchMarkConversationRead(data: { conversation_id: string }) {
-  return request.Post<Service.ResponseResult>('/api/v1/c/message/conversation/read', data)
 }
