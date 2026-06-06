@@ -13,7 +13,7 @@ export interface NavItem {
 /** 静态导航菜单 */
 export const STATIC_NAV_ITEMS: NavItem[] = [
   { path: '/', label: '首页' },
-  { path: '/about', label: '关于我们' },
+  { path: '/about', label: '关于' },
 ]
 
 /**

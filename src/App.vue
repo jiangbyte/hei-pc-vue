@@ -3,8 +3,7 @@
     <!-- Standalone loading overlay (not wrapping content) -->
     <div
       v-show="app.loading"
-      class="fixed inset-0 z-9999 flex flex-col items-center justify-center"
-      style="background: var(--container-bg, #fff)"
+      class="fixed inset-0 z-9999 flex flex-col items-center justify-center bg-white"
     >
       <a-spin size="large" :spinning="true" />
       <div class="mt-4 text-sm" style="color: var(--text-secondary, #00000073)">加载中...</div>

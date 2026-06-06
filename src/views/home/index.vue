@@ -23,7 +23,7 @@
     </section>
 
     <!-- Features -->
-    <section class="py-16 px-6 max-w-1200px mx-auto">
+    <section class="py-16 px-6  mx-auto">
       <h2 class="text-center text-3xl font-semibold mb-2 text-gray-800">核心优势</h2>
       <p class="text-center text-gray-500 mb-12 text-base">我们致力于为您提供最优质的服务</p>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -48,7 +48,7 @@
     <section class="py-16 px-6">
       <h2 class="text-center text-3xl font-semibold mb-2 text-gray-800">最新公告</h2>
       <p class="text-center text-gray-500 mb-12 text-base">了解平台最新动态和通知</p>
-      <div class="max-w-800px mx-auto bg-white rounded-xl p-6 shadow-sm">
+      <div class="mx-auto p-6">
         <a-spin :spinning="loading">
           <a-empty v-if="!loading && notices.length === 0" description="暂无公告" />
           <a-list v-else :data-source="notices" :pagination="false" item-layout="horizontal">
@@ -57,17 +57,22 @@
                 <a-list-item-meta>
                   <template #title>
                     <router-link
-                      :to="`/notices/${item.id}`"
-                      class="text-gray-800 font-medium no-underline hover:text-primary"
+                      :to="{ path: '/notices/detail', query: { id: item.id } }"
+                      class="text-gray-800 font-medium no-underline hover:text-primary text-base"
                     >
                       {{ item.title }}
                     </router-link>
                   </template>
                   <template #description>
-                    <span class="text-xs text-gray-400">{{ item.create_time }}</span>
-                    <a-tag v-if="item.level" :color="noticeLevelColor(item.level)" class="ml-2">
-                      {{ item.level }}
-                    </a-tag>
+                    <div class="flex items-center justify-between w-full">
+                      <div>
+                        <a-tag v-if="item.type">{{ $dict.label('NOTICE_TYPE', item.type) }}</a-tag>
+                        <a-tag v-if="item.level" :color="$dict.color('NOTICE_LEVEL', item.level)" class="ml-1">
+                          {{ $dict.label('NOTICE_LEVEL', item.level) }}
+                        </a-tag>
+                      </div>
+                      <span class="text-xs text-gray-400">{{ item.created_at }}</span>
+                    </div>
                   </template>
                 </a-list-item-meta>
               </a-list-item>
@@ -136,11 +141,6 @@ const features = [
 
 const loading = ref(false)
 const notices = ref<any[]>([])
-
-function noticeLevelColor(level: string) {
-  const map: Record<string, string> = { 紧急: 'red', 重要: 'orange', 普通: 'blue' }
-  return map[level] || 'default'
-}
 
 onMounted(async () => {
   loading.value = true

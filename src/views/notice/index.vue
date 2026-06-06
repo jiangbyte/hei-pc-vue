@@ -11,7 +11,7 @@
         <a-list
           v-else
           :data-source="notices"
-          item-layout="vertical"
+          item-layout="horizontal"
           :pagination="{
             current: page,
             pageSize: size,
@@ -25,20 +25,25 @@
               <a-list-item-meta>
                 <template #title>
                   <router-link
-                    :to="`/notices/${item.id}`"
-                    class="text-gray-800 font-medium no-underline hover:text-primary"
+                    :to="{ path: '/notices/detail', query: { id: item.id } }"
+                    class="text-gray-800 font-medium no-underline hover:text-primary text-base"
                   >
                     {{ item.title }}
                   </router-link>
                 </template>
                 <template #description>
-                  <span class="text-xs text-gray-400 mr-2">{{ item.create_time }}</span>
-                  <a-tag v-if="item.level" :color="levelColor(item.level)">{{ item.level }}</a-tag>
+                  <div class="flex items-center justify-between w-full">
+                    <div>
+                      <a-tag v-if="item.type">{{ $dict.label('NOTICE_TYPE', item.type) }}</a-tag>
+                      <a-tag v-if="item.level" :color="$dict.color('NOTICE_LEVEL', item.level)" class="ml-1">
+                        {{ $dict.label('NOTICE_LEVEL', item.level) }}
+                      </a-tag>
+                    </div>
+                    <span class="text-xs text-gray-400">{{ item.created_at }}</span>
+                  </div>
                 </template>
               </a-list-item-meta>
-              <div v-if="item.summary" class="text-gray-500 mt-2 leading-relaxed">
-                {{ item.summary }}
-              </div>
+
             </a-list-item>
           </template>
         </a-list>
@@ -58,11 +63,6 @@ const notices = ref<any[]>([])
 const page = ref(1)
 const size = ref(10)
 const total = ref(0)
-
-function levelColor(level: string) {
-  const map: Record<string, string> = { 紧急: 'red', 重要: 'orange', 普通: 'blue' }
-  return map[level] || 'default'
-}
 
 async function loadNotices() {
   loading.value = true

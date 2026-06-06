@@ -29,7 +29,7 @@ const router = createRouter({
           meta: { title: '通知公告' },
         },
         {
-          path: 'notices/:id',
+          path: 'notices/detail',
           name: 'notice-detail',
           component: () => import('@/views/notice/detail.vue'),
           meta: { title: '公告详情' },
@@ -37,7 +37,7 @@ const router = createRouter({
         {
           path: 'profile',
           name: 'profile',
-          component: () => import('@/views/sys/profile/index.vue'),
+          component: () => import('@/views/profile/index.vue'),
           meta: { title: '个人中心', requiresAuth: true },
         },
         {

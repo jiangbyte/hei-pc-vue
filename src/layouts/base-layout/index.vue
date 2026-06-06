@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen">
     <!-- Header -->
     <header
       class="h-16 px-4 md:px-8 flex items-center justify-between sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200"
@@ -40,7 +40,7 @@
     <MobileDrawer v-model:open="menuDrawerOpen" />
     <UserDrawer v-model:open="userDrawerOpen" />
 
-    <main class="min-h-[calc(100vh-4rem)]">
+    <main class="min-h-[calc(100vh-4rem)] ">
       <router-view v-slot="{ Component }">
         <component :is="Component" />
       </router-view>
