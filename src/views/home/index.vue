@@ -7,7 +7,7 @@
       <div class="max-w-800px mx-auto">
         <h1 class="text-5xl font-bold mb-4 leading-tight">欢迎来到 Hei PC</h1>
         <p class="text-lg opacity-85 mb-8 leading-relaxed">
-          一个面向公众的现代化服务平台，为您提供高效、安全、便捷的在线服务体验
+          基于 Vue 3 + Vite + TypeScript + Ant Design Vue 构建的 C 端前台解决方案，与 HEI 后端框架配套使用
         </p>
         <div class="flex gap-4 justify-center">
           <a-button
@@ -24,8 +24,8 @@
 
     <!-- Features -->
     <section class="py-16 px-6  mx-auto">
-      <h2 class="text-center text-3xl font-semibold mb-2 text-gray-800">核心优势</h2>
-      <p class="text-center text-gray-500 mb-12 text-base">我们致力于为您提供最优质的服务</p>
+      <h2 class="text-center text-3xl font-semibold mb-2 text-gray-800">特性</h2>
+      <p class="text-center text-gray-500 mb-12 text-base">C 端前台功能特性概览</p>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <a-card
           v-for="item in features"
@@ -108,33 +108,33 @@ const router = useRouter()
 
 const features = [
   {
-    title: '高效便捷',
-    desc: '快速响应的服务体验，满足您的各种需求。系统性能优越，操作流畅。',
+    title: '公开访问',
+    desc: '页面和接口默认对游客开放，仅个人中心和 IM 等需要登录认证，降低使用门槛。',
     icon: ThunderboltOutlined,
   },
   {
-    title: '安全可靠',
-    desc: '数据加密传输，严格保护您的隐私安全。采用先进的安全防护机制。',
+    title: 'C 端认证',
+    desc: '完整的 C 端用户认证体系，支持验证码登录、SM2 国密加密传输、用户注册与管理。',
     icon: SafetyOutlined,
   },
   {
-    title: '丰富功能',
-    desc: '提供多种业务功能，一站式服务平台。持续迭代更新，满足不断变化的需求。',
+    title: '字典系统',
+    desc: '接入公开字典树，支持字典驱动的动态渲染，标签颜色映射与全局字典回显。',
     icon: AppstoreOutlined,
   },
   {
-    title: '用户至上',
-    desc: '以用户体验为核心，持续优化产品。专业的客服团队为您排忧解难。',
+    title: '通知公告',
+    desc: '公共公告列表与详情展示，支持分类标签和等级标记，首页实时展示最新公告。',
     icon: SmileOutlined,
   },
   {
-    title: '专业团队',
-    desc: '资深的研发与运营团队，保障平台稳定运行。多年的行业经验积累。',
+    title: '即时通讯',
+    desc: '内置 WebSocket 实时消息系统，支持好友单聊、群组聊天、会话管理与在线状态感知。',
     icon: TeamOutlined,
   },
   {
-    title: '持续创新',
-    desc: '拥抱前沿技术，不断推陈出新。引领行业标准，打造卓越服务平台。',
+    title: '导航菜单',
+    desc: '三种导航模式：纯前端静态、后端动态获取、静态+后端合并，灵活适配各类需求。',
     icon: RocketOutlined,
   },
 ]
