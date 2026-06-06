@@ -128,7 +128,13 @@ export const useWsStore = defineStore('ws', () => {
   }
 
   return {
-    connected, lastError, conversationVersion, lastNewMessage, lastGroupMessage,
-    unreadCount, connect, disconnect,
+    connected,
+    lastError,
+    conversationVersion,
+    lastNewMessage,
+    lastGroupMessage,
+    unreadCount,
+    connect,
+    disconnect,
   }
 })

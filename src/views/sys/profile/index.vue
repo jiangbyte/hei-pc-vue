@@ -208,7 +208,11 @@ import { ref, computed, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
 import { CameraOutlined } from '@ant-design/icons-vue'
 import { useAuthStore, useDictStore } from '@/store'
-import { fetchClientUserUpdateProfile, fetchClientUserUpdateAvatar, fetchClientUserUpdatePassword } from '@/api/client/user'
+import {
+  fetchClientUserUpdateProfile,
+  fetchClientUserUpdateAvatar,
+  fetchClientUserUpdatePassword,
+} from '@/api/client/user'
 import DictSelect from '@/components/DictSelect.vue'
 import { Cropper, Preview } from 'vue-advanced-cropper'
 import 'vue-advanced-cropper/dist/style.css'

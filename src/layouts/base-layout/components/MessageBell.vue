@@ -1,5 +1,10 @@
 <template>
-  <ADropdown :trigger="['click']" placement="bottomRight" :overlay-style="{ width: '380px' }" @openChange="onOpenChange">
+  <ADropdown
+    :trigger="['click']"
+    placement="bottomRight"
+    :overlay-style="{ width: '380px' }"
+    @openChange="onOpenChange"
+  >
     <div class="message-bell inline-flex items-center">
       <ABadge :count="totalUnread" :overflow-count="99" size="small">
         <BellOutlined class="text-lg cursor-pointer" />
@@ -14,9 +19,16 @@
         </div>
 
         <!-- Tabs -->
-        <ATabs v-model:activeKey="activeTab" :tab-bar-style="{ paddingLeft: '16px', marginBottom: 0 }" size="small">
-          <ATabPane key="conversation" :tab="`对话${convUnread ? ' ('+convUnread+')' : ''}`" />
-          <ATabPane key="broadcast" :tab="`通知${broadcastUnread ? ' ('+broadcastUnread+')' : ''}`" />
+        <ATabs
+          v-model:activeKey="activeTab"
+          :tab-bar-style="{ paddingLeft: '16px', marginBottom: 0 }"
+          size="small"
+        >
+          <ATabPane key="conversation" :tab="`对话${convUnread ? ' (' + convUnread + ')' : ''}`" />
+          <ATabPane
+            key="broadcast"
+            :tab="`通知${broadcastUnread ? ' (' + broadcastUnread + ')' : ''}`"
+          />
         </ATabs>
 
         <!-- Conversation list -->
@@ -27,7 +39,14 @@
             class="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors border-b border-gray-50"
             @click="handleConvClick(conv)"
           >
-            <AAvatar :size="36" :src="conv.conversation_type === 'group' ? (conv.group_avatar || undefined) : (conv.other_avatar || undefined)">
+            <AAvatar
+              :size="36"
+              :src="
+                conv.conversation_type === 'group'
+                  ? conv.group_avatar || undefined
+                  : conv.other_avatar || undefined
+              "
+            >
               <template v-if="conv.conversation_type === 'group'"><TeamOutlined /></template>
               <template v-else>{{ conv.other_nickname?.[0] || '?' }}</template>
             </AAvatar>
@@ -35,15 +54,29 @@
             <div class="flex-1 min-w-0">
               <div class="flex items-center justify-between">
                 <span class="text-sm font-medium truncate">
-                  {{ conv.conversation_type === 'group' ? conv.group_name : (conv.other_nickname || conv.other_user_id) }}
+                  {{
+                    conv.conversation_type === 'group'
+                      ? conv.group_name
+                      : conv.other_nickname || conv.other_user_id
+                  }}
                 </span>
                 <span class="text-xs text-gray-400 shrink-0 ml-2">{{ conv.last_time }}</span>
               </div>
               <div class="flex items-center justify-between mt-0.5">
-                <span class="text-xs text-gray-500 truncate">{{ conv.last_content || '(空)' }}</span>
-                <ABadge v-if="conv.unread_count > 0" :count="conv.unread_count" :overflow-count="99" size="small" class="shrink-0 ml-2" />
+                <span class="text-xs text-gray-500 truncate">
+                  {{ conv.last_content || '(空)' }}
+                </span>
+                <ABadge
+                  v-if="conv.unread_count > 0"
+                  :count="conv.unread_count"
+                  :overflow-count="99"
+                  size="small"
+                  class="shrink-0 ml-2"
+                />
               </div>
-              <div v-if="conv.conversation_type === 'group'" class="text-xs text-gray-400 mt-0.5">{{ conv.member_count }} 人</div>
+              <div v-if="conv.conversation_type === 'group'" class="text-xs text-gray-400 mt-0.5">
+                {{ conv.member_count }} 人
+              </div>
             </div>
           </div>
 
@@ -99,13 +132,9 @@ const conversations = ref<ConversationItem[]>([])
 const broadcasts = ref<BroadcastItem[]>([])
 const loading = ref(false)
 
-const convUnread = computed(() =>
-  conversations.value.reduce((sum, c) => sum + c.unread_count, 0)
-)
+const convUnread = computed(() => conversations.value.reduce((sum, c) => sum + c.unread_count, 0))
 
-const broadcastUnread = computed(() =>
-  broadcasts.value.filter(b => !b.read).length
-)
+const broadcastUnread = computed(() => broadcasts.value.filter(b => !b.read).length)
 
 const totalUnread = computed(() => convUnread.value + broadcastUnread.value)
 
@@ -113,7 +142,7 @@ async function loadConversations() {
   try {
     const res = await fetchConversations()
     if (res.success && res.data) {
-      conversations.value = Array.isArray(res.data) ? res.data : ((res.data as any)?.records || [])
+      conversations.value = Array.isArray(res.data) ? res.data : (res.data as any)?.records || []
     }
   } catch {}
 }
@@ -147,9 +176,12 @@ function onOpenChange(open: boolean) {
   if (open) loadAll()
 }
 
-watch(() => wsStore.conversationVersion, () => {
-  loadConversations()
-})
+watch(
+  () => wsStore.conversationVersion,
+  () => {
+    loadConversations()
+  }
+)
 
 onMounted(() => {
   loadAll()

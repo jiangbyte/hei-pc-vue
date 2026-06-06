@@ -36,7 +36,7 @@ export function useMenu() {
 
   watch(
     () => route.path,
-    (path) => {
+    path => {
       const ancestorPath = findAncestorPath(menuItems.value, path)
       if (ancestorPath) {
         openKeys.value = ancestorPath

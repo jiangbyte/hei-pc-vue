@@ -96,11 +96,7 @@ export function fetchInviteMembers(data: {
   return request.Post<Service.ResponseResult>('/api/v1/c/im/group/invite', data)
 }
 
-export function fetchKickMember(data: {
-  group_id: string
-  user_id: string
-  user_type: string
-}) {
+export function fetchKickMember(data: { group_id: string; user_id: string; user_type: string }) {
   return request.Post<Service.ResponseResult>('/api/v1/c/im/group/kick', data)
 }
 
@@ -139,25 +135,19 @@ export function fetchMuteMember(data: {
   return request.Post<Service.ResponseResult>('/api/v1/c/im/group/mute', data)
 }
 
-export function fetchUnmuteMember(data: {
-  group_id: string
-  user_id: string
-  user_type: string
-}) {
+export function fetchUnmuteMember(data: { group_id: string; user_id: string; user_type: string }) {
   return request.Post<Service.ResponseResult>('/api/v1/c/im/group/unmute', data)
 }
 
 // ==================== Messages ====================
 
-export function fetchGroupMessages(params: {
-  group_id: string
-  cursor?: string
-  size?: number
-}) {
-  return request.Get<Service.ResponseResult<{
-    records: GroupMessageVO[]
-    has_more: boolean
-  }>>('/api/v1/c/im/group/messages', { params })
+export function fetchGroupMessages(params: { group_id: string; cursor?: string; size?: number }) {
+  return request.Get<
+    Service.ResponseResult<{
+      records: GroupMessageVO[]
+      has_more: boolean
+    }>
+  >('/api/v1/c/im/group/messages', { params })
 }
 
 export function fetchSendGroupMessage(data: {
@@ -170,17 +160,11 @@ export function fetchSendGroupMessage(data: {
   return request.Post<Service.ResponseResult<GroupMessageVO>>('/api/v1/c/im/group/send', data)
 }
 
-export function fetchRecallMessage(data: {
-  group_id: string
-  message_id: string
-}) {
+export function fetchRecallMessage(data: { group_id: string; message_id: string }) {
   return request.Post<Service.ResponseResult>('/api/v1/c/im/group/recall', data)
 }
 
-export function fetchMarkGroupRead(data: {
-  group_id: string
-  message_id: string
-}) {
+export function fetchMarkGroupRead(data: { group_id: string; message_id: string }) {
   return request.Post<Service.ResponseResult>('/api/v1/c/im/group/mark-read', data)
 }
 
@@ -190,10 +174,12 @@ export function fetchSearchMessages(params: {
   cursor?: string
   size?: number
 }) {
-  return request.Get<Service.ResponseResult<{
-    records: GroupMessageVO[]
-    has_more: boolean
-  }>>('/api/v1/c/im/group/search', { params })
+  return request.Get<
+    Service.ResponseResult<{
+      records: GroupMessageVO[]
+      has_more: boolean
+    }>
+  >('/api/v1/c/im/group/search', { params })
 }
 
 // ==================== Join/Leave ====================
@@ -207,7 +193,10 @@ export function fetchLeaveGroup(data: { group_id: string }) {
 }
 
 export function fetchPendingJoinRequests(params: { group_id: string }) {
-  return request.Get<Service.ResponseResult<GroupJoinRequestItem[]>>('/api/v1/c/im/group/pending-join-requests', { params })
+  return request.Get<Service.ResponseResult<GroupJoinRequestItem[]>>(
+    '/api/v1/c/im/group/pending-join-requests',
+    { params }
+  )
 }
 
 export function fetchHandleJoinRequest(data: { request_id: string; action: string }) {
@@ -217,5 +206,7 @@ export function fetchHandleJoinRequest(data: { request_id: string; action: strin
 // ==================== Search Groups ====================
 
 export function fetchSearchGroups(params: { keyword: string; size?: number }) {
-  return request.Get<Service.ResponseResult<GroupItem[]>>('/api/v1/c/im/group/search-groups', { params })
+  return request.Get<Service.ResponseResult<GroupItem[]>>('/api/v1/c/im/group/search-groups', {
+    params,
+  })
 }

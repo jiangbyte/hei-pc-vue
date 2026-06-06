@@ -11,19 +11,17 @@ export interface BroadcastItem {
   created_at: string
 }
 
-export function fetchSendBroadcast(data: {
-  title: string
-  content?: string
-  scope?: string
-}) {
+export function fetchSendBroadcast(data: { title: string; content?: string; scope?: string }) {
   return request.Post<Service.ResponseResult>('/api/v1/c/im/broadcast/send', data)
 }
 
 export function fetchBroadcastList(params?: { cursor?: string; size?: number }) {
-  return request.Get<Service.ResponseResult<{
-    records: BroadcastItem[]
-    has_more: boolean
-  }>>('/api/v1/c/im/broadcast/list', { params })
+  return request.Get<
+    Service.ResponseResult<{
+      records: BroadcastItem[]
+      has_more: boolean
+    }>
+  >('/api/v1/c/im/broadcast/list', { params })
 }
 
 export function fetchUnreadBroadcasts() {
@@ -35,5 +33,7 @@ export function fetchMarkBroadcastRead(data: { broadcast_id: string }) {
 }
 
 export function fetchBroadcastDetail(params: { id: string }) {
-  return request.Get<Service.ResponseResult<BroadcastItem>>('/api/v1/c/im/broadcast/detail', { params })
+  return request.Get<Service.ResponseResult<BroadcastItem>>('/api/v1/c/im/broadcast/detail', {
+    params,
+  })
 }

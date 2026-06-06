@@ -7,13 +7,17 @@ export function useWs() {
   const wsStore = useWsStore()
   const { token } = storeToRefs(authStore)
 
-  const stopWatch = watch(token, (newToken) => {
-    if (newToken) {
-      wsStore.connect(newToken)
-    } else {
-      wsStore.disconnect()
-    }
-  }, { immediate: true })
+  const stopWatch = watch(
+    token,
+    newToken => {
+      if (newToken) {
+        wsStore.connect(newToken)
+      } else {
+        wsStore.disconnect()
+      }
+    },
+    { immediate: true }
+  )
 
   onUnmounted(() => {
     stopWatch()

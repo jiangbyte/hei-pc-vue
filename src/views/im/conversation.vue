@@ -1,47 +1,73 @@
 <template>
-  <div class="h-full flex flex-col bg-white rounded-lg shadow-sm" :style="{ height: 'calc(100vh - 120px)' }">
+  <div
+    class="h-full flex flex-col bg-white rounded-lg shadow-sm"
+    :style="{ height: 'calc(100vh - 120px)' }"
+  >
     <!-- Header -->
     <div class="flex items-center gap-2 px-4 py-3 border-b border-gray-100 shrink-0">
       <ArrowLeftOutlined class="cursor-pointer text-base" @click="goBack" />
-      <AAvatar :size="28" :src="convType === 'group' ? (groupAvatar || undefined) : (otherAvatar || undefined)">
+      <AAvatar
+        :size="28"
+        :src="convType === 'group' ? groupAvatar || undefined : otherAvatar || undefined"
+      >
         <TeamOutlined v-if="convType === 'group'" />
         <template v-else>{{ otherNickname?.[0] || '?' }}</template>
       </AAvatar>
       <div class="flex flex-col">
         <span class="font-medium text-sm">{{ displayName || '对话' }}</span>
-        <span v-if="convType === 'group' && memberCount" class="text-xs text-gray-400">{{ memberCount }} 人</span>
+        <span v-if="convType === 'group' && memberCount" class="text-xs text-gray-400">
+          {{ memberCount }} 人
+        </span>
       </div>
       <div class="flex-1" />
-      <AButton v-if="convType === 'group'"  type="text" @click="showGroupInfo = true">
+      <AButton v-if="convType === 'group'" type="text" @click="showGroupInfo = true">
         <InfoCircleOutlined />
       </AButton>
     </div>
 
     <!-- Messages area -->
     <div class="flex-1 relative min-h-0">
-      <div ref="messagesRef" class="absolute inset-0 overflow-y-auto px-4 py-3 space-y-3" @scroll="onScroll">
+      <div
+        ref="messagesRef"
+        class="absolute inset-0 overflow-y-auto px-4 py-3 space-y-3"
+        @scroll="onScroll"
+      >
         <div v-if="loadingMore" class="text-center text-gray-400 text-xs py-2">
-          <LoadingOutlined class="mr-1" />加载中...
+          <LoadingOutlined class="mr-1" />
+          加载中...
         </div>
-        <div v-if="!hasMore && messages.length > 0" class="text-center text-gray-300 text-xs py-2">没有更多消息</div>
+        <div v-if="!hasMore && messages.length > 0" class="text-center text-gray-300 text-xs py-2">
+          没有更多消息
+        </div>
 
         <div
           v-for="msg in messages"
           :key="msg.id"
           class="flex flex-col"
-          :class="String(msg.sender_id || '') === String(currentUserId) ? 'items-end' : 'items-start'"
+          :class="
+            String(msg.sender_id || '') === String(currentUserId) ? 'items-end' : 'items-start'
+          "
         >
           <div v-if="msg.msg_type === 'SYSTEM'" class="text-center w-full">
-            <span class="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded">{{ msg.content }}</span>
+            <span class="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded">
+              {{ msg.content }}
+            </span>
           </div>
 
           <template v-else>
-            <div v-if="String(msg.sender_id || '') !== String(currentUserId)" class="text-xs text-gray-400 mb-0.5 ml-1">{{ msg.sender_id }}</div>
+            <div
+              v-if="String(msg.sender_id || '') !== String(currentUserId)"
+              class="text-xs text-gray-400 mb-0.5 ml-1"
+            >
+              {{ msg.sender_id }}
+            </div>
             <div
               class="max-w-[70%] rounded-lg px-3 py-2 text-sm break-words group relative"
-              :class="String(msg.sender_id || '') === String(currentUserId)
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-100 text-gray-800'"
+              :class="
+                String(msg.sender_id || '') === String(currentUserId)
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-100 text-gray-800'
+              "
             >
               <div v-if="msg.msg_type === 'IMAGE' && imageExtra(msg.extra)" class="mb-1">
                 <img
@@ -52,13 +78,21 @@
                 />
               </div>
 
-              <div v-else-if="msg.msg_type === 'FILE' && fileExtra(msg.extra)" class="flex items-center gap-2">
+              <div
+                v-else-if="msg.msg_type === 'FILE' && fileExtra(msg.extra)"
+                class="flex items-center gap-2"
+              >
                 <FileOutlined class="text-lg" />
                 <div class="flex-1 min-w-0">
                   <div class="text-sm truncate">{{ fileExtra(msg.extra)!.name }}</div>
-                  <div class="text-xs opacity-70">{{ formatFileSize(fileExtra(msg.extra)!.size) }}</div>
+                  <div class="text-xs opacity-70">
+                    {{ formatFileSize(fileExtra(msg.extra)!.size) }}
+                  </div>
                 </div>
-                <DownloadOutlined class="cursor-pointer" @click="downloadFile(msg.file_url || msg.content)" />
+                <DownloadOutlined
+                  class="cursor-pointer"
+                  @click="downloadFile(msg.file_url || msg.content)"
+                />
               </div>
 
               <div v-else>{{ msg.content }}</div>
@@ -66,20 +100,34 @@
               <div class="flex items-center justify-between gap-2 mt-1">
                 <span
                   class="text-xs"
-                  :class="String(msg.sender_id || '') === String(currentUserId) ? 'text-blue-200' : 'text-gray-400'"
-                >{{ msg.created_at }}</span>
+                  :class="
+                    String(msg.sender_id || '') === String(currentUserId)
+                      ? 'text-blue-200'
+                      : 'text-gray-400'
+                  "
+                >
+                  {{ msg.created_at }}
+                </span>
                 <span
                   v-if="canRecall(msg)"
                   class="text-xs cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
-                  :class="String(msg.sender_id || '') === String(currentUserId) ? 'text-blue-200' : 'text-blue-500'"
+                  :class="
+                    String(msg.sender_id || '') === String(currentUserId)
+                      ? 'text-blue-200'
+                      : 'text-blue-500'
+                  "
                   @click="handleRecall(msg)"
-                >撤回</span>
+                >
+                  撤回
+                </span>
               </div>
             </div>
           </template>
         </div>
 
-        <div v-if="!messages.length && !loadingMore" class="text-center text-gray-400 py-12">暂无消息</div>
+        <div v-if="!messages.length && !loadingMore" class="text-center text-gray-400 py-12">
+          暂无消息
+        </div>
       </div>
 
       <div
@@ -87,8 +135,11 @@
         class="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 cursor-pointer"
         @click="scrollToBottom"
       >
-        <div class="bg-blue-500 text-white text-xs px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5 hover:bg-blue-600 transition-colors">
-          <ArrowDownOutlined /><span>新消息</span>
+        <div
+          class="bg-blue-500 text-white text-xs px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5 hover:bg-blue-600 transition-colors"
+        >
+          <ArrowDownOutlined />
+          <span>新消息</span>
         </div>
       </div>
     </div>
@@ -105,10 +156,16 @@
           />
           <div class="flex gap-1 mt-1">
             <AUpload :show-upload-list="false" :before-upload="beforeImageUpload" accept="image/*">
-              <AButton  type="text" :loading="uploading"><PictureOutlined />图片</AButton>
+              <AButton type="text" :loading="uploading">
+                <PictureOutlined />
+                图片
+              </AButton>
             </AUpload>
             <AUpload :show-upload-list="false" :before-upload="beforeFileUpload">
-              <AButton  type="text" :loading="uploading"><FileAddOutlined />文件</AButton>
+              <AButton type="text" :loading="uploading">
+                <FileAddOutlined />
+                文件
+              </AButton>
             </AUpload>
           </div>
         </div>
@@ -145,12 +202,31 @@ import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { message as antMsg } from 'ant-design-vue'
 import {
-  ArrowLeftOutlined, ArrowDownOutlined, InfoCircleOutlined, TeamOutlined,
-  PictureOutlined, FileAddOutlined, LoadingOutlined, FileOutlined, DownloadOutlined,
+  ArrowLeftOutlined,
+  ArrowDownOutlined,
+  InfoCircleOutlined,
+  TeamOutlined,
+  PictureOutlined,
+  FileAddOutlined,
+  LoadingOutlined,
+  FileOutlined,
+  DownloadOutlined,
 } from '@ant-design/icons-vue'
-import { fetchConversations, fetchConversationMessages, fetchMarkConversationRead, fetchSendMessage } from '@/api/im/message'
+import {
+  fetchConversations,
+  fetchConversationMessages,
+  fetchMarkConversationRead,
+  fetchSendMessage,
+} from '@/api/im/message'
 import type { ConversationItem, ConversationMessage } from '@/api/im/message'
-import { fetchSendGroupMessage, fetchGroupMessages, fetchRecallMessage, fetchMarkGroupRead, fetchGroupDetail, fetchGroupMembers } from '@/api/im/group'
+import {
+  fetchSendGroupMessage,
+  fetchGroupMessages,
+  fetchRecallMessage,
+  fetchMarkGroupRead,
+  fetchGroupDetail,
+  fetchGroupMembers,
+} from '@/api/im/group'
 import type { MemberItem, GroupItem } from '@/api/im/group'
 import { useWsStore } from '@/store'
 import { useAuthStore } from '@/store/auth'
@@ -209,19 +285,31 @@ const messagesRef = ref<HTMLElement | null>(null)
 
 function imageExtra(extra?: string): any {
   if (!extra) return null
-  try { return JSON.parse(extra) } catch { return null }
+  try {
+    return JSON.parse(extra)
+  } catch {
+    return null
+  }
 }
 function fileExtra(extra?: string): any {
   if (!extra) return null
-  try { return JSON.parse(extra) } catch { return null }
+  try {
+    return JSON.parse(extra)
+  } catch {
+    return null
+  }
 }
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return bytes + 'B'
   if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + 'KB'
   return (bytes / 1024 / 1024).toFixed(1) + 'MB'
 }
-function previewImage(url: string) { window.open(url, '_blank') }
-function downloadFile(url: string) { window.open(url, '_blank') }
+function previewImage(url: string) {
+  window.open(url, '_blank')
+}
+function downloadFile(url: string) {
+  window.open(url, '_blank')
+}
 
 function canRecall(msg: ConversationMessage): boolean {
   if (String(msg.sender_id || '') !== String(currentUserId.value)) return false
@@ -252,7 +340,9 @@ async function loadUserInfo() {
   try {
     const res = await fetchConversations()
     if (res.success && res.data) {
-      const conv = ((res.data as any)?.records || []).find((c: any) => c.conversation_id === conversationId.value)
+      const conv = ((res.data as any)?.records || []).find(
+        (c: any) => c.conversation_id === conversationId.value
+      )
       if (conv) {
         if (conv.conversation_type === 'group') {
           displayName.value = conv.group_name || ''
@@ -299,7 +389,11 @@ async function loadMessages(cursor?: string) {
         more = res.data.has_more
       }
     } else {
-      const res = await fetchConversationMessages({ conversation_id: conversationId.value, cursor, size: 20 })
+      const res = await fetchConversationMessages({
+        conversation_id: conversationId.value,
+        cursor,
+        size: 20,
+      })
       if (res.success && res.data) {
         records = res.data.records || []
         more = res.data.has_more
@@ -325,7 +419,9 @@ async function loadMessages(cursor?: string) {
       scrollToBottom()
       hasMore.value = more
     }
-  } finally { loadingMore.value = false }
+  } finally {
+    loadingMore.value = false
+  }
 }
 
 function onScroll(e: Event) {
@@ -372,7 +468,9 @@ async function handleSend() {
     await loadMessages()
     await nextTick()
     scrollToBottom()
-  } finally { sending.value = false }
+  } finally {
+    sending.value = false
+  }
 }
 
 function scrollToBottom() {
@@ -386,7 +484,9 @@ function isAtBottom(): boolean {
   return el.scrollHeight - el.scrollTop - el.clientHeight < 50
 }
 
-function goBack() { router.push('/im') }
+function goBack() {
+  router.push('/im')
+}
 
 async function uploadAndSend(file: File, msgType: string) {
   uploading.value = true
@@ -394,13 +494,31 @@ async function uploadAndSend(file: File, msgType: string) {
     const res = await uploadImFile(file, msgType)
     if (res.success && res.data) {
       const fd = res.data
-      const extra = msgType === 'IMAGE'
-        ? JSON.stringify({ engine: fd.engine, bucket: fd.bucket, w: 0, h: 0, thumbnail: '' })
-        : JSON.stringify({ engine: fd.engine, bucket: fd.bucket, name: file.name, size: file.size, mime: file.type })
+      const extra =
+        msgType === 'IMAGE'
+          ? JSON.stringify({ engine: fd.engine, bucket: fd.bucket, w: 0, h: 0, thumbnail: '' })
+          : JSON.stringify({
+              engine: fd.engine,
+              bucket: fd.bucket,
+              name: file.name,
+              size: file.size,
+              mime: file.type,
+            })
       if (convType.value === 'group') {
-        await fetchSendGroupMessage({ group_id: groupId.value, content: fd.file_key, msg_type: msgType, extra })
+        await fetchSendGroupMessage({
+          group_id: groupId.value,
+          content: fd.file_key,
+          msg_type: msgType,
+          extra,
+        })
       } else {
-        await fetchSendMessage({ content: fd.file_key, msg_type: msgType, extra, receiver_ids: [otherUserId.value], receiver_type: otherUserType.value })
+        await fetchSendMessage({
+          content: fd.file_key,
+          msg_type: msgType,
+          extra,
+          receiver_ids: [otherUserId.value],
+          receiver_type: otherUserType.value,
+        })
       }
       await loadMessages()
       await nextTick()
@@ -408,21 +526,34 @@ async function uploadAndSend(file: File, msgType: string) {
     } else {
       antMsg.error('上传失败')
     }
-  } catch { antMsg.error('上传失败') } finally { uploading.value = false }
+  } catch {
+    antMsg.error('上传失败')
+  } finally {
+    uploading.value = false
+  }
 }
 
-function beforeImageUpload(file: File) { uploadAndSend(file, 'IMAGE'); return false }
-function beforeFileUpload(file: File) { uploadAndSend(file, 'FILE'); return false }
+function beforeImageUpload(file: File) {
+  uploadAndSend(file, 'IMAGE')
+  return false
+}
+function beforeFileUpload(file: File) {
+  uploadAndSend(file, 'FILE')
+  return false
+}
 
-watch(() => wsStore.conversationVersion, async () => {
-  if (!isAtBottom()) {
-    hasNewMessage.value = true
-  } else {
-    await loadMessages()
-    await nextTick()
-    scrollToBottom()
+watch(
+  () => wsStore.conversationVersion,
+  async () => {
+    if (!isAtBottom()) {
+      hasNewMessage.value = true
+    } else {
+      await loadMessages()
+      await nextTick()
+      scrollToBottom()
+    }
   }
-})
+)
 
 onMounted(async () => {
   await loadUserInfo()

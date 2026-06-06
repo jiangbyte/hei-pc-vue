@@ -54,10 +54,12 @@ export function fetchFriendList() {
 }
 
 export function fetchPendingRequests() {
-  return request.Get<Service.ResponseResult<{
-    incoming: FriendRequestItem[]
-    outgoing: FriendRequestItem[]
-  }>>('/api/v1/c/im/friend/pending-requests')
+  return request.Get<
+    Service.ResponseResult<{
+      incoming: FriendRequestItem[]
+      outgoing: FriendRequestItem[]
+    }>
+  >('/api/v1/c/im/friend/pending-requests')
 }
 
 export function fetchRemoveFriend(data: { friend_id: string; friend_type: string }) {
@@ -76,10 +78,16 @@ export function fetchBlockList() {
   return request.Get<Service.ResponseResult<BlockItem[]>>('/api/v1/c/im/friend/block-list')
 }
 
-export function fetchRemarkFriend(data: { friend_id: string; friend_type: string; remark: string }) {
+export function fetchRemarkFriend(data: {
+  friend_id: string
+  friend_type: string
+  remark: string
+}) {
   return request.Post<Service.ResponseResult>('/api/v1/c/im/friend/remark', data)
 }
 
 export function fetchSearchUsers(params: { keyword: string; size?: number }) {
-  return request.Get<Service.ResponseResult<SearchUserResult[]>>('/api/v1/c/im/friend/search', { params })
+  return request.Get<Service.ResponseResult<SearchUserResult[]>>('/api/v1/c/im/friend/search', {
+    params,
+  })
 }

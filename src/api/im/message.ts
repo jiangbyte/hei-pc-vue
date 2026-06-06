@@ -43,10 +43,12 @@ export function fetchDeleteMessages(data: { ids: string[] }) {
 }
 
 export function fetchSearchMessages(params: { keyword: string; cursor?: string; size?: number }) {
-  return request.Get<Service.ResponseResult<{
-    records: ConversationMessage[]
-    has_more: boolean
-  }>>('/api/v1/c/im/message/search', { params })
+  return request.Get<
+    Service.ResponseResult<{
+      records: ConversationMessage[]
+      has_more: boolean
+    }>
+  >('/api/v1/c/im/message/search', { params })
 }
 
 export function fetchMarkRead(data: { id: string }) {
@@ -64,7 +66,10 @@ export function fetchRemoveMessages(data: { ids: string[] }) {
 // ==================== Conversation APIs ====================
 
 export function fetchConversations(params?: { cursor?: string; size?: number }) {
-  return request.Get<Service.ResponseResult<{ records: ConversationItem[]; has_more: boolean }>>('/api/v1/c/im/conversation/list', { params })
+  return request.Get<Service.ResponseResult<{ records: ConversationItem[]; has_more: boolean }>>(
+    '/api/v1/c/im/conversation/list',
+    { params }
+  )
 }
 
 export function fetchConversationMessages(params: {
@@ -72,10 +77,12 @@ export function fetchConversationMessages(params: {
   cursor?: string
   size?: number
 }) {
-  return request.Get<Service.ResponseResult<{
-    records: ConversationMessage[]
-    has_more: boolean
-  }>>('/api/v1/c/im/conversation/messages', { params })
+  return request.Get<
+    Service.ResponseResult<{
+      records: ConversationMessage[]
+      has_more: boolean
+    }>
+  >('/api/v1/c/im/conversation/messages', { params })
 }
 
 export function fetchMarkConversationRead(data: { conversation_id: string }) {
@@ -85,7 +92,7 @@ export function fetchMarkConversationRead(data: { conversation_id: string }) {
 export function fetchGetOrCreateConversation(data: { user_id: string; user_type: string }) {
   return request.Post<Service.ResponseResult<{ conversation_id: string; display_name: string }>>(
     '/api/v1/c/im/conversation/get-or-create',
-    data,
+    data
   )
 }
 
