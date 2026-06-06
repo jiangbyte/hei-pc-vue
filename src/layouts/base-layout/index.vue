@@ -55,8 +55,7 @@ import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { MenuOutlined } from '@ant-design/icons-vue'
 import { useAuthStore, useAppStore } from '@/store'
-import { Logo, UserAvatar, UserDrawer, FooterBar, MobileDrawer } from './components'
-import MessageBell from './components/MessageBell.vue'
+import { Logo, UserAvatar, UserDrawer, FooterBar, MobileDrawer, MessageBell } from './components'
 import { useMenu } from './sider/useMenu'
 
 const route = useRoute()

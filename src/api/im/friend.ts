@@ -27,6 +27,12 @@ export interface SearchUserResult {
   avatar: string
 }
 
+export interface BlockItem {
+  blocked_id: string
+  blocked_type: string
+  created_at: string
+}
+
 export function fetchSendFriendRequest(data: {
   receiver_id: string
   receiver_type: string
@@ -56,6 +62,22 @@ export function fetchPendingRequests() {
 
 export function fetchRemoveFriend(data: { friend_id: string; friend_type: string }) {
   return request.Post<Service.ResponseResult>('/api/v1/c/im/friend/remove', data)
+}
+
+export function fetchBlockUser(data: { blocked_id: string; blocked_type: string }) {
+  return request.Post<Service.ResponseResult>('/api/v1/c/im/friend/block', data)
+}
+
+export function fetchUnblockUser(data: { blocked_id: string; blocked_type: string }) {
+  return request.Post<Service.ResponseResult>('/api/v1/c/im/friend/unblock', data)
+}
+
+export function fetchBlockList() {
+  return request.Get<Service.ResponseResult<BlockItem[]>>('/api/v1/c/im/friend/block-list')
+}
+
+export function fetchRemarkFriend(data: { friend_id: string; friend_type: string; remark: string }) {
+  return request.Post<Service.ResponseResult>('/api/v1/c/im/friend/remark', data)
 }
 
 export function fetchSearchUsers(params: { keyword: string; size?: number }) {

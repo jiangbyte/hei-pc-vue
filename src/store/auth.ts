@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { fetchLogin, fetchSm2PublicKey, fetchLogout } from '@/api/auth'
-import { fetchClientUserCurrent } from '@/api/client-user'
+import { fetchClientUserCurrent } from '@/api/client/user'
 import { sm2 } from 'sm-crypto'
 import { useDictStore } from './dict'
 

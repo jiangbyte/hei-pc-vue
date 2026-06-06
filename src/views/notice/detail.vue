@@ -27,7 +27,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { fetchNoticeDetail } from '@/api/notice'
+import { fetchNoticeDetail } from '@/api/sys/notice'
 
 defineOptions({ name: 'PcNoticeDetail' })
 

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { fetchBizDictTree } from '@/api/dict'
+import { fetchBizDictTree } from '@/api/sys/dict'
 
 export const useDictStore = defineStore('dict', {
   state: () => ({

@@ -95,7 +95,7 @@ import {
   TeamOutlined,
   RocketOutlined,
 } from '@ant-design/icons-vue'
-import { fetchNoticeLatest } from '@/api/notice'
+import { fetchNoticeLatest } from '@/api/sys/notice'
 
 defineOptions({ name: 'PcHome' })
 

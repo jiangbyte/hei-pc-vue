@@ -49,7 +49,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { fetchNoticePage } from '@/api/notice'
+import { fetchNoticePage } from '@/api/sys/notice'
 
 defineOptions({ name: 'PcNotices' })
 

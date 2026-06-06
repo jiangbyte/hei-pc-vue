@@ -1,5 +1,5 @@
 import { request } from '@/utils'
-import type { ConversationMessage } from '@/api/message'
+import type { ConversationMessage } from '@/api/im/message'
 
 // ==================== Types ====================
 
@@ -10,6 +10,7 @@ export interface GroupItem {
   owner_id: string
   owner_type: string
   group_type: string
+  is_public?: boolean
   notice: string
   member_count: number
   last_content: string
@@ -37,7 +38,19 @@ export interface GroupMessageVO {
   created_at: string
 }
 
-// ==================== Group ====================
+export interface GroupJoinRequestItem {
+  id: string
+  group_id: string
+  user_id: string
+  user_type: string
+  reason: string
+  status: string
+  handled_by: string
+  created_at: string
+  updated_at: string
+}
+
+// ==================== Group CRUD ====================
 
 export function fetchMyGroups() {
   return request.Get<Service.ResponseResult<GroupItem[]>>('/api/v1/c/im/group/my-groups')
@@ -56,9 +69,85 @@ export function fetchCreateGroup(data: {
   return request.Post<Service.ResponseResult<GroupItem>>('/api/v1/c/im/group/create', data)
 }
 
+export function fetchUpdateGroup(data: {
+  group_id: string
+  name?: string
+  avatar?: string
+  notice?: string
+}) {
+  return request.Post<Service.ResponseResult>('/api/v1/c/im/group/update', data)
+}
+
+export function fetchDissolveGroup(data: { group_id: string }) {
+  return request.Post<Service.ResponseResult>('/api/v1/c/im/group/dissolve', data)
+}
+
+// ==================== Members ====================
+
 export function fetchGroupMembers(params: { group_id: string }) {
   return request.Get<Service.ResponseResult<MemberItem[]>>('/api/v1/c/im/group/members', { params })
 }
+
+export function fetchInviteMembers(data: {
+  group_id: string
+  user_ids: string[]
+  user_type: string
+}) {
+  return request.Post<Service.ResponseResult>('/api/v1/c/im/group/invite', data)
+}
+
+export function fetchKickMember(data: {
+  group_id: string
+  user_id: string
+  user_type: string
+}) {
+  return request.Post<Service.ResponseResult>('/api/v1/c/im/group/kick', data)
+}
+
+export function fetchSetRole(data: {
+  group_id: string
+  user_id: string
+  user_type: string
+  role: string
+}) {
+  return request.Post<Service.ResponseResult>('/api/v1/c/im/group/set-role', data)
+}
+
+export function fetchTransferOwner(data: {
+  group_id: string
+  new_owner_id: string
+  new_owner_type: string
+}) {
+  return request.Post<Service.ResponseResult>('/api/v1/c/im/group/transfer-owner', data)
+}
+
+export function fetchSetNickname(data: {
+  group_id: string
+  user_id: string
+  user_type: string
+  nickname: string
+}) {
+  return request.Post<Service.ResponseResult>('/api/v1/c/im/group/set-nickname', data)
+}
+
+export function fetchMuteMember(data: {
+  group_id: string
+  user_id: string
+  user_type: string
+  duration: number
+}) {
+  return request.Post<Service.ResponseResult>('/api/v1/c/im/group/mute', data)
+}
+
+export function fetchUnmuteMember(data: {
+  group_id: string
+  user_id: string
+  user_type: string
+}) {
+  return request.Post<Service.ResponseResult>('/api/v1/c/im/group/unmute', data)
+}
+
+// ==================== Messages ====================
 
 export function fetchGroupMessages(params: {
   group_id: string
@@ -107,10 +196,26 @@ export function fetchSearchMessages(params: {
   }>>('/api/v1/c/im/group/search', { params })
 }
 
+// ==================== Join/Leave ====================
+
 export function fetchJoinGroup(data: { group_id: string }) {
   return request.Post<Service.ResponseResult>('/api/v1/c/im/group/join', data)
 }
 
 export function fetchLeaveGroup(data: { group_id: string }) {
   return request.Post<Service.ResponseResult>('/api/v1/c/im/group/leave', data)
+}
+
+export function fetchPendingJoinRequests(params: { group_id: string }) {
+  return request.Get<Service.ResponseResult<GroupJoinRequestItem[]>>('/api/v1/c/im/group/pending-join-requests', { params })
+}
+
+export function fetchHandleJoinRequest(data: { request_id: string; action: string }) {
+  return request.Post<Service.ResponseResult>('/api/v1/c/im/group/handle-join-request', data)
+}
+
+// ==================== Search Groups ====================
+
+export function fetchSearchGroups(params: { keyword: string; size?: number }) {
+  return request.Get<Service.ResponseResult<GroupItem[]>>('/api/v1/c/im/group/search-groups', { params })
 }

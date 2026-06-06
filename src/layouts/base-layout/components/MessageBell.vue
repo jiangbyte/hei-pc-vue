@@ -1,50 +1,79 @@
 <template>
-  <ADropdown :trigger="['click']" placement="bottomRight" :overlay-style="{ width: '360px' }" @openChange="onOpenChange">
+  <ADropdown :trigger="['click']" placement="bottomRight" :overlay-style="{ width: '380px' }" @openChange="onOpenChange">
     <div class="message-bell inline-flex items-center">
-      <ABadge :count="wsStore.unreadCount" :overflow-count="99" size="small">
+      <ABadge :count="totalUnread" :overflow-count="99" size="small">
         <BellOutlined class="text-lg cursor-pointer" />
       </ABadge>
     </div>
     <template #overlay>
       <div class="bg-white rounded-lg shadow-lg">
         <!-- Header -->
-        <div class="flex items-center justify-between px-4 pt-3 pb-0">
-          <span class="text-base font-medium text-gray-800">消息通知</span>
-          <a-button type="link" @click="router.push('/message')">查看全部</a-button>
+        <div class="flex items-center justify-between px-4 pt-3 pb-2">
+          <span class="text-base font-medium text-gray-800">消息</span>
+          <a-button type="link" size="small" @click="router.push('/im')">查看全部</a-button>
         </div>
 
         <!-- Tabs -->
         <ATabs v-model:activeKey="activeTab" :tab-bar-style="{ paddingLeft: '16px', marginBottom: 0 }" size="small">
-          <ATabPane key="all" tab="全部" />
-          <ATabPane key="unread" tab="未读" />
-          <ATabPane key="read" tab="已读" />
+          <ATabPane key="conversation" :tab="`对话${convUnread ? ' ('+convUnread+')' : ''}`" />
+          <ATabPane key="broadcast" :tab="`通知${broadcastUnread ? ' ('+broadcastUnread+')' : ''}`" />
         </ATabs>
 
-        <!-- List -->
-        <div class="max-h-80 overflow-y-auto">
+        <!-- Conversation list -->
+        <div v-if="activeTab === 'conversation'" class="max-h-96 overflow-y-auto">
           <div
-            v-for="item in filteredList"
-            :key="item.id"
-            class="flex flex-col gap-1 px-4 py-3 border-b border-gray-50 cursor-pointer hover:bg-gray-50 transition-colors"
-            @click="handleItemClick(item)"
+            v-for="conv in conversations"
+            :key="conv.conversation_id"
+            class="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors border-b border-gray-50"
+            @click="handleConvClick(conv)"
           >
-            <div class="flex items-center justify-between">
-              <span
-                class="text-sm font-medium truncate flex-1"
-                :class="item.status === 'unread' ? 'text-gray-900' : 'text-gray-600'"
-              >
-                {{ item.title }}
-              </span>
-              <ATag v-if="item.status === 'unread'" color="processing" class="!text-xs !px-1.5 !py-0.5 !leading-none !ml-2">未读</ATag>
+            <AAvatar :size="36" :src="conv.conversation_type === 'group' ? (conv.group_avatar || undefined) : (conv.other_avatar || undefined)">
+              <template v-if="conv.conversation_type === 'group'"><TeamOutlined /></template>
+              <template v-else>{{ conv.other_nickname?.[0] || '?' }}</template>
+            </AAvatar>
+
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-medium truncate">
+                  {{ conv.conversation_type === 'group' ? conv.group_name : (conv.other_nickname || conv.other_user_id) }}
+                </span>
+                <span class="text-xs text-gray-400 shrink-0 ml-2">{{ conv.last_time }}</span>
+              </div>
+              <div class="flex items-center justify-between mt-0.5">
+                <span class="text-xs text-gray-500 truncate">{{ conv.last_content || '(空)' }}</span>
+                <ABadge v-if="conv.unread_count > 0" :count="conv.unread_count" :overflow-count="99" size="small" class="shrink-0 ml-2" />
+              </div>
+              <div v-if="conv.conversation_type === 'group'" class="text-xs text-gray-400 mt-0.5">{{ conv.member_count }} 人</div>
             </div>
-            <div class="text-xs text-gray-400 truncate">{{ item.content || '-' }}</div>
-            <div class="text-xs text-gray-300">{{ item.created_at }}</div>
           </div>
 
-          <!-- Empty -->
-          <div v-if="!filteredList.length" class="flex flex-col items-center py-10 text-gray-300">
+          <div v-if="!conversations.length" class="flex flex-col items-center py-10 text-gray-300">
             <BellOutlined class="text-3xl mb-2" />
-            <span class="text-sm">暂无消息</span>
+            <span class="text-sm">暂无对话</span>
+          </div>
+        </div>
+
+        <!-- Broadcast list -->
+        <div v-if="activeTab === 'broadcast'" class="max-h-96 overflow-y-auto">
+          <div
+            v-for="b in broadcasts"
+            :key="b.id"
+            class="flex items-start gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors border-b border-gray-50"
+            @click="handleBroadcastClick(b)"
+          >
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <ABadge v-if="!b.read" color="red" />
+                <span class="text-sm font-medium truncate">{{ b.title }}</span>
+                <span class="text-xs text-gray-400 shrink-0 ml-auto">{{ b.created_at }}</span>
+              </div>
+              <div class="text-xs text-gray-500 truncate mt-0.5">{{ b.content || '(空)' }}</div>
+            </div>
+          </div>
+
+          <div v-if="!broadcasts.length" class="flex flex-col items-center py-10 text-gray-300">
+            <BellOutlined class="text-3xl mb-2" />
+            <span class="text-sm">暂无通知</span>
           </div>
         </div>
       </div>
@@ -55,53 +84,74 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { BellOutlined } from '@ant-design/icons-vue'
-import { fetchMessagePage, fetchMarkRead } from '@/api/message'
+import { BellOutlined, TeamOutlined } from '@ant-design/icons-vue'
+import { fetchConversations } from '@/api/im/message'
+import type { ConversationItem } from '@/api/im/message'
+import { fetchUnreadBroadcasts, fetchMarkBroadcastRead } from '@/api/im/broadcast'
+import type { BroadcastItem } from '@/api/im/broadcast'
 import { useWsStore } from '@/store'
 
 const router = useRouter()
 const wsStore = useWsStore()
-const list = ref<any[]>([])
-const activeTab = ref('all')
 
-const filteredList = computed(() => {
-  if (activeTab.value === 'all') return list.value
-  return list.value.filter((item) => item.status === activeTab.value)
-})
+const activeTab = ref('conversation')
+const conversations = ref<ConversationItem[]>([])
+const broadcasts = ref<BroadcastItem[]>([])
+const loading = ref(false)
 
-async function loadList() {
+const convUnread = computed(() =>
+  conversations.value.reduce((sum, c) => sum + c.unread_count, 0)
+)
+
+const broadcastUnread = computed(() =>
+  broadcasts.value.filter(b => !b.read).length
+)
+
+const totalUnread = computed(() => convUnread.value + broadcastUnread.value)
+
+async function loadConversations() {
   try {
-    const res = await fetchMessagePage({ current: 1, size: 10 })
+    const res = await fetchConversations()
     if (res.success && res.data) {
-      list.value = res.data.records || []
+      conversations.value = Array.isArray(res.data) ? res.data : ((res.data as any)?.records || [])
     }
   } catch {}
 }
 
-async function handleItemClick(item: any) {
-  if (item.status === 'unread') {
-    try {
-      await fetchMarkRead({ id: item.id })
-      item.status = 'read'
-      wsStore.loadUnreadCount()
-    } catch {}
-  }
+async function loadBroadcasts() {
+  try {
+    const res = await fetchUnreadBroadcasts()
+    if (res.success && res.data) {
+      broadcasts.value = Array.isArray(res.data) ? res.data : []
+    }
+  } catch {}
 }
 
-watch(() => wsStore.unreadVersion, () => {
-  loadList()
-  wsStore.loadUnreadCount()
-});
+function loadAll() {
+  Promise.all([loadConversations(), loadBroadcasts()])
+}
+
+function handleConvClick(conv: ConversationItem) {
+  router.push({ path: '/im/conversation', query: { conversation_id: conv.conversation_id } })
+}
+
+function handleBroadcastClick(b: BroadcastItem) {
+  router.push({ path: '/im', query: { tab: 'broadcasts' } })
+  if (!b.read) {
+    fetchMarkBroadcastRead({ broadcast_id: b.id }).catch(() => {})
+    b.read = true
+  }
+}
 
 function onOpenChange(open: boolean) {
-  if (open) {
-    loadList()
-    wsStore.loadUnreadCount()
-  }
+  if (open) loadAll()
 }
 
+watch(() => wsStore.conversationVersion, () => {
+  loadConversations()
+})
+
 onMounted(() => {
-  wsStore.loadUnreadCount()
-  loadList()
+  loadAll()
 })
 </script>
