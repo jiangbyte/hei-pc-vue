@@ -1,6 +1,6 @@
 # Hei PC Vue
 
-**Hei PC Vue** 是 HEI 快速开发框架的 Vue3 前台（C 端）解决方案，基于 Vue 3 + Vite + TypeScript + Ant Design Vue 构建，面向公众用户。
+**Hei PC Vue** —— Vue3 + Ant Design Vue 构建的 C 端门户，开箱即用。
 
 ![Vue](https://img.shields.io/badge/Vue-3.5-brightgreen.svg)
 ![Vite](https://img.shields.io/badge/Vite-8.x-orange.svg)
